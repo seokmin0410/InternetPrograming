@@ -53,17 +53,23 @@ function saveDiary() {
   closePopup();
 }
 
-// 초기 행 생성 (오늘까지 4일치)
+//하루 지날 때마다 행 새로 생성성
 function initializeTable() {
   const table = document.getElementById("diaryTable");
-  const today = new Date();
+  let today = stripTime(new Date());
+  let startDate = new Date("2025-04-01");
 
-  for (let i = 0; i < 4; i++) {
-    const date = new Date(today);
-    date.setDate(today.getDate() - i);
-    addRow(formatDate(date), false);
+  while (startDate <= today) {
+    addRow(formatDate(startDate), true); // 최신 날짜가 위에 오도록
+    startDate.setDate(startDate.getDate() + 1);
   }
 }
+
+// 날짜 객체에서 시간 제거
+function stripTime(date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
 
 // 행 추가 함수
 function addRow(dateStr, toTop = true) {
@@ -87,5 +93,24 @@ setInterval(() => {
   }
 }, 3600000); // 1시간마다 검사
 // 테스트 목적으로 시간을 줄이고 싶다면 10000 (10초)로 설정 가능
+
+/*
+//무한 스크롤
+let currentOldestDate = stripTime(new Date()); // 오늘부터 시작
+
+function loadMorePastDates(days = 7) {
+  for (let i = 1; i <= days; i++) {
+    currentOldestDate.setDate(currentOldestDate.getDate() - 1);
+    addRow(formatDate(currentOldestDate), false); // 아래로 추가
+  }
+}
+
+// 스크롤 이벤트 감지
+window.addEventListener('scroll', () => {
+  if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+    loadMorePastDates();
+  }
+});
+*/
 
 initializeTable();
