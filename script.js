@@ -12,10 +12,10 @@ function getFormattedLabel(offset) {
   return `${date.getMonth() + 1}/${date.getDate()}`;
 }
 
-// 로컬 스토리지에서 데이터 로드 및 날짜 이동 처리
+// 로컬 스토리지에서 데이터 로드 및 날짜 이동 처리 (날짜 기준 비교)
 function loadData() {
   const defaultSchedule = {
-    lastAccessDate: new Date().toISOString(), // 시각까지 저장
+    lastAccessDate: getDateString(), // 시각 없이 날짜만 저장
     schedule: {
       today: Array(24).fill(""),
       tomorrow: Array(24).fill(""),
@@ -25,25 +25,28 @@ function loadData() {
 
   let data = JSON.parse(localStorage.getItem("todoData")) || defaultSchedule;
 
-  const lastDate = new Date(data.lastAccessDate);
-  const now = new Date();
-  const diffMs = now - lastDate;
-  const diffHours = diffMs / (1000 * 60 * 60);
+  const lastDateStr = data.lastAccessDate;
+  const nowDateStr = getDateString();
 
-  if (diffHours >= 24) {
-    if (diffHours < 48) {
-      // 하루 이상 ~ 이틀 미만
+  const lastDate = new Date(lastDateStr);
+  const nowDate = new Date(nowDateStr);
+
+  const diffDays = Math.floor((nowDate - lastDate) / (1000 * 60 * 60 * 24));
+
+  if (diffDays >= 1) {
+    if (diffDays === 1) {
+      // 하루 지남
       data.schedule.today = data.schedule.tomorrow;
       data.schedule.tomorrow = data.schedule.dayAfterTomorrow;
       data.schedule.dayAfterTomorrow = Array(24).fill("");
     } else {
-      // 이틀 이상 지남: 모두 초기화
+      // 이틀 이상 지남
       data.schedule.today = Array(24).fill("");
       data.schedule.tomorrow = Array(24).fill("");
       data.schedule.dayAfterTomorrow = Array(24).fill("");
     }
 
-    data.lastAccessDate = now.toISOString(); // 갱신 시 시각 포함 저장
+    data.lastAccessDate = nowDateStr;
     localStorage.setItem("todoData", JSON.stringify(data));
   }
 
