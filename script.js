@@ -160,5 +160,9 @@ document.getElementById("panel-cancel").addEventListener("click", () => {
   document.getElementById("input-panel").style.display = "none";
 });
 
-// 페이지 로드시 스케줄 생성
-document.addEventListener("DOMContentLoaded", generateSchedule);
+// 페이지 로드시 날짜 체크 → 이후 화면 생성
+document.addEventListener("DOMContentLoaded", () => {
+  loadData();            // 날짜 이동 먼저 처리
+  generateSchedule();    // 그 다음 화면 생성
+});
+
