@@ -114,3 +114,5 @@ window.addEventListener('scroll', () => {
 */
 
 initializeTable();
+
+//그냥 작성 해 봄봄
