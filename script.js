@@ -1,4 +1,3 @@
-// script.js
 // 날짜 문자열 생성 (yyyy-mm-dd 형식)
 function getDateString(offset = 0) {
   const date = new Date();
@@ -16,7 +15,7 @@ function getFormattedLabel(offset) {
 // 로컬 스토리지에서 데이터 로드 및 날짜 이동 처리
 function loadData() {
   const defaultSchedule = {
-    lastAccessDate: getDateString(),
+    lastAccessDate: new Date().toISOString(), // 시각까지 저장
     schedule: {
       today: Array(24).fill(""),
       tomorrow: Array(24).fill(""),
@@ -26,33 +25,30 @@ function loadData() {
 
   let data = JSON.parse(localStorage.getItem("todoData")) || defaultSchedule;
 
-  const lastDateStr = data.lastAccessDate;
-  const nowDateStr = getDateString();
+  const lastDate = new Date(data.lastAccessDate);
+  const now = new Date();
+  const diffMs = now - lastDate;
+  const diffHours = diffMs / (1000 * 60 * 60);
 
-  const last = new Date(lastDateStr);
-  const now = new Date(nowDateStr);
-  const diffDays = Math.floor((now - last) / (1000 * 60 * 60 * 24));
-
-  if (diffDays >= 1) {
-    if (diffDays === 1) {
-      // 하루 지났을 경우: 내일 → 오늘, 모레 → 내일, 모레 초기화
+  if (diffHours >= 24) {
+    if (diffHours < 48) {
+      // 하루 이상 ~ 이틀 미만
       data.schedule.today = data.schedule.tomorrow;
       data.schedule.tomorrow = data.schedule.dayAfterTomorrow;
       data.schedule.dayAfterTomorrow = Array(24).fill("");
     } else {
-      // 2일 이상 지났을 경우: 모두 초기화
+      // 이틀 이상 지남: 모두 초기화
       data.schedule.today = Array(24).fill("");
       data.schedule.tomorrow = Array(24).fill("");
       data.schedule.dayAfterTomorrow = Array(24).fill("");
     }
 
-    data.lastAccessDate = getDateString(); // 날짜 갱신
-    localStorage.setItem("todoData", JSON.stringify(data)); // 저장
+    data.lastAccessDate = now.toISOString(); // 갱신 시 시각 포함 저장
+    localStorage.setItem("todoData", JSON.stringify(data));
   }
 
   return data;
 }
-
 
 // 데이터 저장
 function saveData(data) {
@@ -68,7 +64,7 @@ function generateSchedule() {
 
   const data = loadData();
   const now = new Date();
-  const currentTotalMinutes = now.getHours() * 60 + now.getMinutes(); // 현재 시각 (분 단위)
+  const currentTotalMinutes = now.getHours() * 60 + now.getMinutes();
 
   // 헤더 구성
   const timeHeader = document.createElement("div");
@@ -103,23 +99,19 @@ function generateSchedule() {
       input.type = "text";
       input.value = data.schedule[key][hour] || "";
 
-      // 지나간 시간 셀 처리 (현재 시각이 해당 셀의 종료 시간보다 크면 비활성화)
       const endHourMinutes = (hour + 1) * 60;
       if (key === "today" && currentTotalMinutes >= endHourMinutes) {
         inputWrapper.classList.add("past-cell");
         input.disabled = true;
       }
 
-      // 일반 입력 저장
       input.addEventListener("input", () => {
         data.schedule[key][hour] = input.value;
         saveData(data);
       });
 
-      // 더블 클릭 시 상세 입력창 호출
       input.addEventListener("dblclick", () => {
         const data = loadData();
-
         selectedKey = key;
         selectedHour = hour;
         selectedInputElement = input;
@@ -160,9 +152,8 @@ document.getElementById("panel-cancel").addEventListener("click", () => {
   document.getElementById("input-panel").style.display = "none";
 });
 
-// 페이지 로드시 날짜 체크 → 이후 화면 생성
+// 페이지 로드시 처리
 document.addEventListener("DOMContentLoaded", () => {
-  loadData();            // 날짜 이동 먼저 처리
-  generateSchedule();    // 그 다음 화면 생성
+  loadData();
+  generateSchedule();
 });
-
