@@ -70,6 +70,11 @@ app.post('/todos', (req, res) => {
   });
 });
 
+app.use((req, res, next) => {
+  console.log(`👉 [${req.method}] ${req.url}`);
+  next();
+});
+
 //  서버 실행
 app.listen(port, () => {
   console.log(`🚀 API 서버 실행 중: http://localhost:${port}`);
