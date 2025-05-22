@@ -29,7 +29,8 @@ body {
 }
 
 .cell {
-  padding: 10px;
+
+  padding: 1.5px;
   border: 1px solid #ccc;
   text-align: center;
 }
@@ -44,8 +45,19 @@ body {
 }
 
 .time-cell {
-  background-color: #fafafa;
+  font-size: 14px;
 }
+
+.time-cell:nth-child(-n+5){
+  background: rgb(50, 87, 136);
+  color:white;
+}
+
+.time-cell:nth-child(6){
+  background: rgb(230, 201, 72);
+  color:white;
+}
+
 
 .input-cell input {
   width: 95%;
