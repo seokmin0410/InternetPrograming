@@ -124,9 +124,31 @@ function generateSchedule() {
     const row = document.createElement("div");
     row.className = "row";
 
+
+    // 시간 셀 생성
     const timeCell = document.createElement("div");
     timeCell.className = "cell time-cell";
     timeCell.textContent = `${String(hour).padStart(2, "0")}:00 ~ ${String((hour + 1) % 24).padStart(2, "0")}:00`;
+
+    // ⬇⬇⬇ 시간대에 따른 배경 색상 적용 시작 ⬇⬇⬇
+
+    // 00시 ~ 06시 또는 19시 ~ 23시는 어두운 배경 (검은색)
+    if (hour <= 6 || hour >= 19) {
+      timeCell.style.backgroundColor = "rgb(50, 87, 136)";     // 배경: 검정
+      timeCell.style.color = "white";               // 글자색: 흰색
+    }
+    // 07시 ~ 18시는 밝은 배경
+    else {
+      timeCell.style.backgroundColor = "rgb(255, 227, 103)";   // 배경: 주광
+      timeCell.style.color = "black";               // 글자색: 검정
+    }
+
+    // ⬆⬆⬆ 시간대에 따른 배경 색상 적용 끝 ⬆⬆⬆
+
+
+
+
+
     row.appendChild(timeCell);
 
     keys.forEach((key, index) => {
@@ -166,6 +188,11 @@ function generateSchedule() {
 
     body.appendChild(row);
   }
+
+
+
+
+
 }
 
 // 입력 패널 관련 변수

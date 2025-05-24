@@ -1,0 +1,38 @@
+<!--index2.html-->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>다이어리 목록</title>
+  <link rel="stylesheet" href="style2.css">
+</head>
+<body>
+  <div class="parent">
+    <div class="children">
+      <h2>일지 작성하기</h2>
+      <nav>
+          <ul>
+              <li><a href="index.html">일과 작성 하기</a></li>
+          </ul>
+      </nav>
+    </div>
+
+      <table id="diaryTable">
+        <!-- 초기 날짜는 JavaScript에서 추가됨 -->
+      </table>
+  </div>
+  
+
+  <!-- 작성 팝업 -->
+  <div id="diaryPopup" class="popup">
+    <div class="popup-content">
+      <p id="diaryDateLabel">날짜:</p>
+      <textarea id="diaryContent" rows="6" cols="40"></textarea><br>
+      <button onclick="saveDiary()">저장</button>
+      <button onclick="closePopup()">취소</button>
+    </div>
+  </div>
+
+  <script src="script2.js"></script>
+</body>
+</html>
